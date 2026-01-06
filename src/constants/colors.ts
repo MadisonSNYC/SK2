@@ -1,4 +1,4 @@
-import { ColorKey, ColorDefinition } from '../types';
+import type { ColorKey, ColorDefinition } from '../types/index';
 
 /**
  * Color definitions for the Follow Me 3x3 grid

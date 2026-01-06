@@ -1,4 +1,4 @@
-import { AppSettings, FollowMeVariant } from '../types';
+import type { AppSettings, FollowMeVariant } from '../types/index';
 
 /**
  * Default app configuration

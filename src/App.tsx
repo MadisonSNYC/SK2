@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import MachineList from './components/machines/MachineList';
 
 type Tab = 'tracker' | 'follow-me' | 'settings';
 
@@ -15,17 +16,7 @@ function App() {
 
       {/* Main Content */}
       <main className="flex-1 p-4 overflow-auto">
-        {activeTab === 'tracker' && (
-          <div className="text-center py-12">
-            <h2 className="text-lg font-semibold mb-2">Slot Tracker</h2>
-            <p className="text-gray-400 text-sm">Coming in Phase 1</p>
-            <div className="mt-4 p-4 bg-gray-800 rounded-lg max-w-sm mx-auto">
-              <p className="text-xs text-gray-500">
-                Track sessions, log wins/losses, view statistics
-              </p>
-            </div>
-          </div>
-        )}
+        {activeTab === 'tracker' && <MachineList />}
 
         {activeTab === 'follow-me' && (
           <div className="text-center py-12">

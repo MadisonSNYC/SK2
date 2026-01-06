@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from '../types';
+import { STORAGE_KEYS } from '../types/index';
 
 /**
  * Generic localStorage utilities with JSON serialization
