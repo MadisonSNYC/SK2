@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Dark theme base */
+body {
+  @apply bg-gray-900 text-white;
+}
