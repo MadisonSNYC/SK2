@@ -1,12 +1,15 @@
-import { useEffect, useRef } from 'react';
-import type { ColorKey } from '../../types/index';
+import { useEffect, useRef, useState } from 'react';
+import type { ColorKey, BonusDetails } from '../../types/index';
 import { useFollowMe } from '../../hooks/useFollowMe';
 import { useSpeech } from '../../hooks/useSpeech';
 import { useVoiceInput } from '../../hooks/useVoiceInput';
+import { useFollowMeAttempts } from '../../hooks/useFollowMeAttempts';
 import { useApp } from '../../context/AppContext';
 import ColorGrid from './ColorGrid';
 import SequenceDisplay from './SequenceDisplay';
 import FollowMeControls from './FollowMeControls';
+import BonusModal from './BonusModal';
+import BonusDetailsForm from './BonusDetailsForm';
 
 export default function FollowMeHelper() {
   const { activeMachine } = useApp();
@@ -48,21 +51,27 @@ export default function FollowMeHelper() {
     isListening,
   } = useVoiceInput(handleVoiceColorDetected);
 
+  const { saveAttempt } = useFollowMeAttempts();
+
+  // Modal state for Next Round flow
+  const [showBonusModal, setShowBonusModal] = useState(false);
+  const [showBonusDetailsForm, setShowBonusDetailsForm] = useState(false);
+
   // Track previous sequence length for auto-readback
   const prevSequenceLengthRef = useRef(0);
 
-  // Auto-readback: trigger TTS whenever sequence grows
+  // Auto-readback: trigger TTS whenever user adds a color
   useEffect(() => {
     const currentLength = sequence.length;
     const prevLength = prevSequenceLengthRef.current;
 
-    // Only trigger if sequence grew AND we're not currently speaking
-    // (prevents re-triggering during an active readback or after reset/undo)
-    if (currentLength > prevLength && currentLength > 0 && !isSpeaking) {
+    // Only trigger TTS if sequence grew by exactly 1 (user added one color)
+    // AND we're not currently speaking
+    if (currentLength === prevLength + 1 && !isSpeaking) {
       speakSequence(sequence);
     }
 
-    // Update the ref for next comparison
+    // Update ref for next comparison
     prevSequenceLengthRef.current = currentLength;
   }, [sequence, speakSequence, isSpeaking]);
 
@@ -91,6 +100,68 @@ export default function FollowMeHelper() {
     speak(statusText);
   };
 
+  const handleNextRound = () => {
+    if (sequence.length === 0) return;
+    stopSpeaking(); // Stop any active TTS
+    setShowBonusModal(true);
+  };
+
+  const handleBonusNo = () => {
+    // No bonus triggered - save attempt with bonusTriggered: false
+    saveAttempt(
+      currentRound,
+      sequence,
+      false, // bonusTriggered
+      undefined, // bonusDetails
+      activeMachine?.id,
+      undefined // sessionId - will implement in Phase 3
+    );
+
+    // Reset for next round
+    prevSequenceLengthRef.current = 0;
+    resetSequence();
+    setShowBonusModal(false);
+  };
+
+  const handleBonusYes = () => {
+    setShowBonusModal(false);
+    setShowBonusDetailsForm(true);
+  };
+
+  const handleBonusDetailsSave = (details: BonusDetails) => {
+    // Bonus triggered - save attempt with bonus details
+    saveAttempt(
+      currentRound,
+      sequence,
+      true, // bonusTriggered
+      details,
+      activeMachine?.id,
+      undefined // sessionId
+    );
+
+    // Reset for next round
+    prevSequenceLengthRef.current = 0;
+    resetSequence();
+    setShowBonusDetailsForm(false);
+  };
+
+  const handleBonusDetailsSkip = () => {
+    // User skipped entering details - save with bonusTriggered: true but no details
+    saveAttempt(
+      currentRound,
+      sequence,
+      true, // bonusTriggered
+      undefined, // no details
+      activeMachine?.id,
+      undefined // sessionId
+    );
+
+    // Reset for next round
+    prevSequenceLengthRef.current = 0;
+    resetSequence();
+    setShowBonusDetailsForm(false);
+  };
+
   return (
     <div className="flex flex-col gap-6 p-4 max-w-2xl mx-auto">
       {/* Header with active machine or placeholder */}
@@ -111,7 +182,11 @@ export default function FollowMeHelper() {
       <div className="w-full">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium text-gray-300">
-            Round {currentRound} / 20
+            {currentRound >= 20 ? (
+              <>Round {currentRound} 🏆</>
+            ) : (
+              <>Round {currentRound} / 20</>
+            )}
           </span>
           <span className="text-sm font-medium text-gray-300">
             {Math.round(progress)}%
@@ -120,14 +195,19 @@ export default function FollowMeHelper() {
         <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-300 ${
-              isComplete ? 'bg-green-500' : 'bg-yellow-400'
+              currentRound >= 20 ? 'bg-green-500' : 'bg-yellow-400'
             }`}
-            style={{ width: `${progress}%` }}
+            style={{ width: `${Math.min(progress, 100)}%` }}
           />
         </div>
-        {isComplete && (
+        {isComplete && currentRound === 20 && (
           <p className="text-center text-green-400 font-semibold mt-2 text-sm">
             🎉 Complete! You've reached 20 rounds!
+          </p>
+        )}
+        {currentRound > 20 && (
+          <p className="text-center text-green-400 font-semibold mt-2 text-sm">
+            🏆 {currentRound - 20} rounds past goal!
           </p>
         )}
       </div>
@@ -227,6 +307,30 @@ export default function FollowMeHelper() {
         onStatus={handleStatus}
         isSpeaking={isSpeaking}
         hasSequence={sequence.length > 0}
+      />
+
+      {/* Next Round Button */}
+      {sequence.length > 0 && (
+        <button
+          onClick={handleNextRound}
+          className="w-full py-4 px-6 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg transition-colors shadow-lg"
+        >
+          Next Round →
+        </button>
+      )}
+
+      {/* Modals */}
+      <BonusModal
+        isOpen={showBonusModal}
+        roundsCompleted={currentRound}
+        onYes={handleBonusYes}
+        onNo={handleBonusNo}
+      />
+
+      <BonusDetailsForm
+        isOpen={showBonusDetailsForm}
+        onSave={handleBonusDetailsSave}
+        onSkip={handleBonusDetailsSkip}
       />
     </div>
   );

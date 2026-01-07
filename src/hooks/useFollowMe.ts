@@ -1,25 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { ColorKey } from '../types/index';
-import { STORAGE_KEYS } from '../types/index';
-import { getStorageItem, setStorageItem } from '../utils/storage';
 
 const FOLLOW_ME_ROUNDS_TO_WIN = 20;
 
 export function useFollowMe() {
   const [sequence, setSequence] = useState<ColorKey[]>([]);
 
-  // Load sequence from localStorage on mount
-  useEffect(() => {
-    const saved = getStorageItem<ColorKey[]>(STORAGE_KEYS.CURRENT_SEQUENCE, []);
-    if (saved.length > 0) {
-      setSequence(saved);
-    }
-  }, []);
-
-  // Save sequence to localStorage whenever it changes
-  useEffect(() => {
-    setStorageItem(STORAGE_KEYS.CURRENT_SEQUENCE, sequence);
-  }, [sequence]);
+  // REMOVED: localStorage persistence of current sequence
+  // Sequence now resets on page refresh for clean UX
+  // Completed attempts are still saved via "Next Round" button
 
   const addColor = (colorKey: ColorKey) => {
     setSequence(prev => [...prev, colorKey]);
