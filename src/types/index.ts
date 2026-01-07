@@ -67,67 +67,8 @@ export interface Machine {
   updatedAt: Date;
 }
 
-// ============================================
-// SESSION TYPES
-// ============================================
-
-/**
- * Play session - represents one visit/session on a machine
- * From sitting down to cashing out
- */
-export interface Session {
-  id: string;
-  machineId: string;                 // Link to Machine being played
-  startTime: Date;
-  endTime?: Date;                    // Undefined if session is active
-  isActive: boolean;                 // True if session is ongoing
-
-  // Bankroll tracking
-  startingBalance: number;           // Money started with
-  currentBalance: number;            // Current balance (updated as transactions are logged)
-
-  // Computed totals (can be derived from transactions but cached for performance)
-  totalWagered: number;              // Sum of all bets placed
-  totalWon: number;                  // Sum of all winnings
-  totalLost: number;                 // Sum of all losses
-  netProfit: number;                 // currentBalance - startingBalance
-
-  // Metadata
-  transactionCount: number;          // Number of transactions
-  followMeAttemptCount: number;      // Number of Follow Me games played
-  notes?: string;
-}
-
-// ============================================
-// TRANSACTION TYPES
-// ============================================
-
-/** Transaction type categories */
-export type TransactionType =
-  | 'win'      // Money won from a spin
-  | 'loss'     // Money lost on a spin
-  | 'expense'  // Side costs (drinks, food, tips)
-  | 'buy-in'   // Additional money added to session
-  | 'cashout'; // Partial or full withdrawal
-
-/**
- * Transaction - individual money movement within a session
- */
-export interface Transaction {
-  id: string;
-  sessionId: string;
-  timestamp: Date;
-  type: TransactionType;
-  amount: number;                    // Always positive (type determines +/-)
-  description?: string;              // Optional note
-  gameTitle?: string;                // Which game on multi-game machine
-
-  // For win/loss transactions
-  betAmount?: number;                // Original bet that led to this outcome
-
-  // Link to Follow Me if this was a Follow Me bonus win
-  followMeAttemptId?: string;
-}
+// SESSION TYPES moved to line 268+ (Phase 3 implementation)
+// TRANSACTION TYPES moved to line 268+ (Phase 3 implementation)
 
 // ============================================
 // FOLLOW ME TYPES
@@ -266,6 +207,55 @@ export interface AppSettings {
 }
 
 // ============================================
+// SESSION TYPES (Phase 3)
+// ============================================
+
+/** Transaction type categories */
+export type TransactionType = 'win' | 'loss' | 'buy-in' | 'cashout' | 'expense';
+
+/**
+ * Transaction - individual money movement within a session
+ */
+export interface Transaction {
+  id: string;
+  sessionId: string;
+  timestamp: Date;
+  type: TransactionType;
+  amount: number;              // Always positive, type determines +/-
+  description?: string;
+  game?: string;               // Which game this transaction was on
+  machineId?: string;          // Link to machine if applicable
+}
+
+/**
+ * Session - represents one visit/session on a machine
+ * From sitting down to cashing out
+ */
+export interface Session {
+  id: string;
+  startTime: Date;
+  endTime?: Date;              // Undefined while active
+  isActive: boolean;
+
+  // Bankroll
+  startingBalance: number;     // Initial buy-in amount
+  currentBalance: number;      // Running balance (updated by transactions)
+  endingBalance?: number;      // Final balance when session ends
+
+  // Context
+  machineId?: string;          // Primary machine for session
+  currentGameId?: string;      // Current game being played
+  location?: string;           // Venue name
+  notes?: string;              // User notes
+
+  // Linked data
+  transactions: Transaction[]; // All transactions in this session
+  followMeAttemptIds?: string[]; // Link to Follow Me attempts during session
+}
+
+// LifetimeStats already defined above (lines 132-162)
+
+// ============================================
 // STORAGE KEYS
 // ============================================
 
@@ -276,6 +266,7 @@ export const STORAGE_KEYS = {
   TRANSACTIONS: 'skillmachine_transactions',
   FOLLOW_ME_ATTEMPTS: 'skillmachine_followme_attempts',
   SETTINGS: 'skillmachine_settings',
-  ACTIVE_SESSION_ID: 'skillmachine_active_session',
+  ACTIVE_SESSION: 'skillmachine_active_session',
   CURRENT_SEQUENCE: 'skillmachine_current_sequence',
+  LIFETIME_STATS: 'skillmachine_lifetime_stats',
 } as const;
