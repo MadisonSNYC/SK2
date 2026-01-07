@@ -7,7 +7,7 @@ Must follow rules in [TASK-PROTOCOL.md](./TASK-PROTOCOL.md).
 
 ## 🎯 Project Status
 
-**Current Phase:** Phase 1 - Machine Management (COMPLETE ✅)
+**Current Phase:** Phase 2 - Follow Me Helper Core (COMPLETE ✅)
 **Repo:** https://github.com/MadisonSNYC/SK2.git
 **Stack:** React + TypeScript + Vite + Tailwind CSS v4
 
@@ -83,11 +83,44 @@ Must follow rules in [TASK-PROTOCOL.md](./TASK-PROTOCOL.md).
 
 ---
 
-## Upcoming Tasks
-
 ### Task: Phase 2 - Follow Me Helper Core
-**Branch:** feat/follow-me-core
-**Status:** NOT STARTED
+**Branch:** feat/phase-two-follow-me
+**Status:** COMPLETE ✅
+**Priority:** HIGH 🔥
+
+> Build Simon Says-style color sequence helper with TTS, voice input, and visual highlighting
+
+#### Features Implemented:
+- **Status:** COMPLETE ✅
+- **Scope:** 3x3 color grid, TTS playback (0.72x speed, 2s pauses), Web Speech Recognition voice input, auto-readback, visual highlighting, localStorage persistence
+- **Verification:** YES
+- **Push Log:** Commit [pending] - Pushed to origin/feat/phase-two-follow-me
+- **Date/Time Confirmed:** January 7, 2026 - 1:30 PM EST
+
+**Files Created:**
+- `src/hooks/useFollowMe.ts` - Sequence state management with persistence
+- `src/hooks/useSpeech.ts` - TTS wrapper with 0.72x rate and 2s pauses
+- `src/hooks/useVoiceInput.ts` - Web Speech Recognition with color name matching
+- `src/components/follow-me/ColorGrid.tsx` - 3x3 interactive color grid
+- `src/components/follow-me/SequenceDisplay.tsx` - Numbered colored squares display
+- `src/components/follow-me/FollowMeControls.tsx` - Reset/Undo/Replay/Status buttons
+- `src/components/follow-me/FollowMeHelper.tsx` - Main container with auto-readback
+
+**Files Updated:**
+- `src/App.tsx` - Integrated FollowMeHelper into Follow Me tab
+
+**Key Features:**
+- Auto-readback after each color addition (tap or voice)
+- Visual highlighting with scale (1.15 grid, 1.4 sequence) and glow effects
+- Inactive colors dim to 35% during playback
+- Reset/Undo work during TTS (stop speech immediately)
+- Voice input with continuous listening and alias matching
+- Progress bar showing X/20 rounds with completion celebration
+- Active machine name display
+
+---
+
+## Upcoming Tasks
 
 ### Task: Phase 3 - Session Tracking
 **Branch:** feat/session-tracking
@@ -101,4 +134,4 @@ _No completed tasks yet._
 
 ---
 
-*Last Updated: January 6, 2026 - 4:46 PM EST*
+*Last Updated: January 7, 2026 - 1:30 PM EST*
