@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import type { Session } from '../types/index';
+import type { Session, Transaction, TransactionType } from '../types/index';
 import { STORAGE_KEYS } from '../types/index';
 import { getStorageItem, setStorageItem, generateId } from '../utils/storage';
 
 interface StartSessionParams {
   startingBalance: number;
   machineId?: string;
+  currentGameId?: string;
   location?: string;
   notes?: string;
 }
@@ -37,7 +38,7 @@ export function useSession() {
    * Start a new session
    */
   const startSession = (params: StartSessionParams): Session => {
-    const { startingBalance, machineId, location, notes } = params;
+    const { startingBalance, machineId, currentGameId, location, notes } = params;
 
     const newSession: Session = {
       id: generateId(),
@@ -46,6 +47,7 @@ export function useSession() {
       startingBalance,
       currentBalance: startingBalance,
       machineId,
+      currentGameId,
       location,
       notes,
       transactions: [],
@@ -118,6 +120,76 @@ export function useSession() {
     return session.currentBalance - session.startingBalance;
   };
 
+  /**
+   * Add a transaction to the active session
+   */
+  const addTransaction = (
+    type: TransactionType,
+    amount: number,
+    description?: string
+  ): Transaction | null => {
+    if (!activeSession) return null;
+
+    const transaction: Transaction = {
+      id: generateId(),
+      sessionId: activeSession.id,
+      timestamp: new Date(),
+      type,
+      amount: Math.abs(amount), // Always store as positive
+      description,
+      game: activeSession.currentGameId,
+      machineId: activeSession.machineId,
+    };
+
+    // Calculate new balance
+    const balanceChange =
+      type === 'win' || type === 'cashout' ? amount : -amount;
+
+    const newBalance = activeSession.currentBalance + balanceChange;
+
+    // Update session with new transaction and balance
+    setActiveSession({
+      ...activeSession,
+      currentBalance: newBalance,
+      transactions: [...activeSession.transactions, transaction],
+    });
+
+    return transaction;
+  };
+
+  /**
+   * Get all transactions for the active session
+   */
+  const getSessionTransactions = (): Transaction[] => {
+    return activeSession?.transactions || [];
+  };
+
+  /**
+   * Get session statistics
+   */
+  const getSessionStats = () => {
+    if (!activeSession) return null;
+
+    const transactions = activeSession.transactions;
+    const wins = transactions.filter((t) => t.type === 'win');
+    const losses = transactions.filter((t) => t.type === 'loss');
+
+    const totalWins = wins.reduce((sum, t) => sum + t.amount, 0);
+    const totalLosses = losses.reduce((sum, t) => sum + t.amount, 0);
+    const netProfitLoss = totalWins - totalLosses;
+    const winRate =
+      transactions.length > 0 ? (wins.length / transactions.length) * 100 : 0;
+
+    return {
+      totalWins,
+      totalLosses,
+      netProfitLoss,
+      winCount: wins.length,
+      lossCount: losses.length,
+      winRate,
+    };
+  };
+
   return {
     sessions,
     activeSession,
@@ -128,5 +200,8 @@ export function useSession() {
     addNote,
     getSessionDuration,
     getNetProfitLoss,
+    addTransaction,
+    getSessionTransactions,
+    getSessionStats,
   };
 }

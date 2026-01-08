@@ -1,16 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useSessionContext } from '../../context/SessionContext';
 import { useApp } from '../../context/AppContext';
+import TransactionButtons from '../session/TransactionButtons';
+import TransactionList from '../session/TransactionList';
+import AmountInputModal from '../session/AmountInputModal';
 
 interface ActiveSessionDashboardProps {
   onEndSession: () => void;
 }
 
 export default function ActiveSessionDashboard({ onEndSession }: ActiveSessionDashboardProps) {
-  const { activeSession, getNetProfitLoss } = useSessionContext();
+  const { activeSession, getNetProfitLoss, addTransaction } = useSessionContext();
   const { machines } = useApp();
   const [elapsed, setElapsed] = useState(0); // seconds
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showWinModal, setShowWinModal] = useState(false);
+  const [showLossModal, setShowLossModal] = useState(false);
 
   // Timer effect
   useEffect(() => {
@@ -57,6 +62,16 @@ export default function ActiveSessionDashboard({ onEndSession }: ActiveSessionDa
 
   const handleCancelEnd = () => {
     setShowConfirm(false);
+  };
+
+  const handleWin = (amount: number) => {
+    addTransaction('win', amount);
+    setShowWinModal(false);
+  };
+
+  const handleLoss = (amount: number) => {
+    addTransaction('loss', amount);
+    setShowLossModal(false);
   };
 
   return (
@@ -129,15 +144,39 @@ export default function ActiveSessionDashboard({ onEndSession }: ActiveSessionDa
         )}
       </div>
 
-      {/* Placeholder for Transaction Buttons (Phase 4) */}
-      <div className="bg-gray-800 rounded-lg p-6 text-center border-2 border-dashed border-gray-700">
-        <p className="text-gray-400 text-sm">
-          💡 Transaction logging coming in Phase 4
-        </p>
-        <p className="text-gray-500 text-xs mt-1">
-          (+Win / -Loss / Expense buttons)
-        </p>
+      {/* Transaction Buttons */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-white">Log Transaction</h2>
+        <TransactionButtons
+          onWin={() => setShowWinModal(true)}
+          onLoss={() => setShowLossModal(true)}
+        />
       </div>
+
+      {/* Recent Transactions */}
+      {activeSession.transactions.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-lg font-semibold text-white">Recent Transactions</h2>
+          <TransactionList transactions={activeSession.transactions} maxItems={5} />
+        </div>
+      )}
+
+      {/* Modals */}
+      <AmountInputModal
+        isOpen={showWinModal}
+        onClose={() => setShowWinModal(false)}
+        onSubmit={handleWin}
+        type="win"
+        currentBalance={activeSession.currentBalance}
+      />
+
+      <AmountInputModal
+        isOpen={showLossModal}
+        onClose={() => setShowLossModal(false)}
+        onSubmit={handleLoss}
+        type="loss"
+        currentBalance={activeSession.currentBalance}
+      />
 
       {/* End Session Button */}
       {!showConfirm ? (

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import type { Machine } from '../types/index';
 import { STORAGE_KEYS } from '../types/index';
 import { getStorageItem, setStorageItem, generateId } from '../utils/storage';
@@ -21,7 +22,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Load machines and active machine ID from localStorage on mount
   useEffect(() => {
     const savedMachines = getStorageItem<Machine[]>(STORAGE_KEYS.MACHINES, []);
-    const savedActiveId = getStorageItem<string | null>(STORAGE_KEYS.ACTIVE_SESSION_ID, null);
+    const savedActiveId = getStorageItem<string | null>(STORAGE_KEYS.ACTIVE_MACHINE_ID, null);
 
     setMachines(savedMachines);
     setActiveMachineId(savedActiveId);
@@ -34,7 +35,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Save active machine ID to localStorage whenever it changes
   useEffect(() => {
-    setStorageItem(STORAGE_KEYS.ACTIVE_SESSION_ID, activeMachineId);
+    setStorageItem(STORAGE_KEYS.ACTIVE_MACHINE_ID, activeMachineId);
   }, [activeMachineId]);
 
   const addMachine = (machineData: Omit<Machine, 'id' | 'createdAt' | 'updatedAt'>) => {

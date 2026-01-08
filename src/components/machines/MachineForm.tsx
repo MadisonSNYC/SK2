@@ -1,4 +1,5 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import type { Machine, Manufacturer, FollowMeVariant } from '../../types/index';
 import { MANUFACTURER_DEFAULTS } from '../../constants/config';
 

@@ -5,12 +5,12 @@ import { useEffect, useState } from 'react';
 export default function HomePage() {
   const { hasActiveSession, activeSession, sessions } = useSessionContext();
   const navigate = useNavigate();
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [_currentTime, _setCurrentTime] = useState(new Date());
 
   // Update time every minute for "sessions today" calculation
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTime(new Date());
+      _setCurrentTime(new Date());
     }, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);

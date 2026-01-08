@@ -1,6 +1,6 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import { useSession } from '../hooks/useSession';
-import type { Session } from '../types/index';
+import type { Session, Transaction, TransactionType } from '../types/index';
 
 interface SessionContextValue {
   sessions: Session[];
@@ -9,6 +9,7 @@ interface SessionContextValue {
   startSession: (params: {
     startingBalance: number;
     machineId?: string;
+    currentGameId?: string;
     location?: string;
     notes?: string;
   }) => Session;
@@ -17,6 +18,16 @@ interface SessionContextValue {
   addNote: (note: string) => void;
   getSessionDuration: (session: Session) => number;
   getNetProfitLoss: (session: Session) => number;
+  addTransaction: (type: TransactionType, amount: number, description?: string) => Transaction | null;
+  getSessionTransactions: () => Transaction[];
+  getSessionStats: () => {
+    totalWins: number;
+    totalLosses: number;
+    netProfitLoss: number;
+    winCount: number;
+    lossCount: number;
+    winRate: number;
+  } | null;
 }
 
 const SessionContext = createContext<SessionContextValue | undefined>(undefined);
