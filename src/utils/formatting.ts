@@ -52,3 +52,13 @@ export function formatDate(date: Date, options?: Intl.DateTimeFormatOptions): st
   };
   return new Date(date).toLocaleDateString('en-US', options || defaultOptions);
 }
+
+/**
+ * Parse currency string to number, rounded to 2 decimal places
+ * Prevents floating point precision errors
+ */
+export function parseCurrency(value: string | number): number {
+  const parsed = typeof value === 'string' ? parseFloat(value) : value;
+  if (isNaN(parsed)) return 0;
+  return Math.round(parsed * 100) / 100;
+}

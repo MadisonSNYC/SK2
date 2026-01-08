@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import type { Session } from '../types/index';
+import type { Session, Transaction } from '../types/index';
 import { STORAGE_KEYS } from '../types/index';
 import { getStorageItem, setStorageItem, generateId } from '../utils/storage';
+import { parseCurrency } from '../utils/formatting';
 
 interface StartSessionParams {
   startingBalance: number;
@@ -118,6 +119,40 @@ export function useSession() {
     return session.currentBalance - session.startingBalance;
   };
 
+  /**
+   * Add a transaction to the active session
+   * Automatically updates balance based on transaction type
+   */
+  const addTransaction = (
+    type: 'win' | 'loss',
+    amount: number,
+    description?: string
+  ): Transaction | null => {
+    if (!activeSession) return null;
+
+    const transaction: Transaction = {
+      id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      sessionId: activeSession.id,
+      timestamp: new Date(),
+      type,
+      amount: parseCurrency(amount),
+      description,
+    };
+
+    const balanceChange = type === 'win' ? amount : -amount;
+    const newBalance = parseCurrency(activeSession.currentBalance + balanceChange);
+
+    const updatedSession = {
+      ...activeSession,
+      currentBalance: newBalance,
+      transactions: [...(activeSession.transactions || []), transaction],
+    };
+
+    setActiveSession(updatedSession);
+
+    return transaction;
+  };
+
   return {
     sessions,
     activeSession,
@@ -128,5 +163,6 @@ export function useSession() {
     addNote,
     getSessionDuration,
     getNetProfitLoss,
+    addTransaction,
   };
 }

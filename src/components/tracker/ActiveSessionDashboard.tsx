@@ -12,6 +12,8 @@ import { useApp } from '../../context/AppContext';
 import SessionTimer from './SessionTimer';
 import SessionBalanceCard from './SessionBalanceCard';
 import SessionInfoCard from './SessionInfoCard';
+import TransactionButtons from './TransactionButtons';
+import TransactionList from './TransactionList';
 
 interface ActiveSessionDashboardProps {
   onEndSession: () => void;
@@ -69,15 +71,11 @@ export default function ActiveSessionDashboard({ onEndSession }: ActiveSessionDa
         notes={activeSession.notes}
       />
 
-      {/* Placeholder for Transaction Buttons (Phase 4) */}
-      <div className="bg-gray-800 rounded-lg p-6 text-center border-2 border-dashed border-gray-700">
-        <p className="text-gray-400 text-sm">
-          💡 Transaction logging coming in Phase 4
-        </p>
-        <p className="text-gray-500 text-xs mt-1">
-          (+Win / -Loss / Expense buttons)
-        </p>
-      </div>
+      {/* Transaction Logging */}
+      <TransactionButtons />
+
+      {/* Recent Transactions */}
+      <TransactionList />
 
       {/* End Session Button */}
       {!showConfirm ? (

@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSessionContext } from '../../context/SessionContext';
 import { LOCATIONS, type GameInfo } from '../../constants/gameData';
+import { parseCurrency } from '../../utils/formatting';
 import LocationSelector from './LocationSelector';
 import MachineSelector from './MachineSelector';
 import GameSelector from './GameSelector';
@@ -77,8 +78,8 @@ export default function StartSessionForm() {
       return;
     }
 
-    const balance = parseFloat(startingBalance);
-    if (!startingBalance || isNaN(balance) || balance <= 0) {
+    const balance = parseCurrency(startingBalance);
+    if (!startingBalance || balance <= 0) {
       setError('Please enter a valid starting balance greater than $0');
       return;
     }

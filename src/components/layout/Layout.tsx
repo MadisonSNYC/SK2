@@ -25,6 +25,14 @@ export default function Layout() {
           🏠 Home
         </NavLink>
         <NavLink
+          to="/history"
+          className={({ isActive }) =>
+            `flex-1 py-3 text-center text-sm ${isActive ? 'text-yellow-400 bg-gray-700' : 'text-gray-400'}`
+          }
+        >
+          📋 History
+        </NavLink>
+        <NavLink
           to="/follow-me"
           className={({ isActive }) =>
             `flex-1 py-3 text-center text-sm ${isActive ? 'text-yellow-400 bg-gray-700' : 'text-gray-400'}`

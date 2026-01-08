@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 import { useSession } from '../hooks/useSession';
-import type { Session } from '../types/index';
+import type { Session, Transaction } from '../types/index';
 
 interface SessionContextValue {
   sessions: Session[];
@@ -18,6 +18,7 @@ interface SessionContextValue {
   addNote: (note: string) => void;
   getSessionDuration: (session: Session) => number;
   getNetProfitLoss: (session: Session) => number;
+  addTransaction: (type: 'win' | 'loss', amount: number, description?: string) => Transaction | null;
 }
 
 const SessionContext = createContext<SessionContextValue | undefined>(undefined);
