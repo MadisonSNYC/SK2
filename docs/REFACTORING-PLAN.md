@@ -1,8 +1,8 @@
 # 🔧 SK2 Codebase Refactoring Plan
 
 **Status:** 🔒 **POST-AUDIT ENFORCEMENT MODE ACTIVE**
-**Document Version:** 1.1
-**Last Updated:** January 7, 2026 8:09 PM EST
+**Document Version:** 1.2
+**Last Updated:** January 8, 2026 7:55 AM EST
 **Audit Date:** January 7, 2026
 
 ---
@@ -1138,21 +1138,21 @@ Resolves audit task R5.4"
 | Phase | Tasks | Completed | In Progress | Not Started | Status |
 |-------|-------|-----------|-------------|-------------|--------|
 | **R1** | 1 | 1 | 0 | 0 | ✅ Complete |
-| **R2** | 2 | 0 | 0 | 2 | ⬜ Not Started |
-| **R3** | 3 | 0 | 0 | 3 | ⬜ Not Started |
+| **R2** | 2 | 1 | 0 | 1 | 🔄 In Progress |
+| **R3** | 3 | 1 | 0 | 2 | 🔄 In Progress |
 | **R4** | 2 | 0 | 0 | 2 | ⬜ Not Started |
 | **R5** | 4 | 0 | 0 | 4 | ⬜ Not Started |
-| **TOTAL** | **12** | **1** | **0** | **11** | **8% Complete** |
+| **TOTAL** | **12** | **3** | **0** | **9** | **25% Complete** |
 
 ### Task Status
 
 | Task ID | Task Name | Priority | Estimated | Status | Completed By | Date |
 |---------|-----------|----------|-----------|--------|--------------|------|
 | R1.1 | Split types/index.ts | P0 | 2h | ✅ | Claude | Jan 7, 2026 8:09 PM EST |
-| R2.1 | Refactor FollowMeHelper | P0 | 3h | ⬜ | - | - |
+| R2.1 | Refactor FollowMeHelper | P0 | 3h | ✅ | Claude | Jan 8, 2026 7:55 AM EST |
 | R2.2 | Refactor StartSessionPage | P0 | 3h | ⬜ | - | - |
 | R3.1 | Split useSession hook | P1 | 1h | ⬜ | - | - |
-| R3.2 | Create useFollowMeOrchestrator | P1 | 0h* | ⬜ | - | - |
+| R3.2 | Create useFollowMeOrchestrator | P1 | 0h* | ✅ | Claude | Jan 8, 2026 7:55 AM EST |
 | R3.3 | Create useMachineDefaults | P1 | 0.5h | ⬜ | - | - |
 | R4.1 | Refactor ActiveSessionDashboard | P1 | 2h | ⬜ | - | - |
 | R4.2 | Simplify MachineForm | P1 | 1h | ⬜ | - | - |
@@ -1176,6 +1176,8 @@ Resolves audit task R5.4"
 | Task ID | Completed By | Date | Time Spent | Notes |
 |---------|--------------|------|------------|-------|
 | R1.1 | Claude | January 7, 2026 8:09 PM EST | ~1.5h | ✅ All tests pass. Branch: refactor/r1.1-split-types |
+| R2.1 | Claude | January 8, 2026 7:55 AM EST | ~2.5h | ✅ 337→88 lines (74% reduction). Branch: refactor/r2.1-follow-me-helper |
+| R3.2 | Claude | January 8, 2026 7:55 AM EST | ~0h | ✅ Created as part of R2.1. Included in useFollowMeOrchestrator.ts |
 
 ---
 
