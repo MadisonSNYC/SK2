@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useSessionContext } from '../context/SessionContext';
 import { useEffect, useState } from 'react';
+import type { Session } from '../types';
 
 export default function HomePage() {
   const { hasActiveSession, activeSession, sessions } = useSessionContext();
@@ -39,7 +40,7 @@ export default function HomePage() {
     }).format(Math.abs(amount));
   };
 
-  const formatDuration = (session: any) => {
+  const formatDuration = (session: Session) => {
     if (!session.endTime) return 'In Progress';
     const start = new Date(session.startTime).getTime();
     const end = new Date(session.endTime).getTime();
