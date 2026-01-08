@@ -3,8 +3,6 @@
  * @module components/common/TextAreaField
  */
 
-import type { ReactNode } from 'react';
-
 interface TextAreaFieldProps {
   label: string;
   value: string;

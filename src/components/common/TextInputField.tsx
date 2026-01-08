@@ -3,8 +3,6 @@
  * @module components/common/TextInputField
  */
 
-import type { ReactNode } from 'react';
-
 interface TextInputFieldProps {
   label: string;
   value: string;
