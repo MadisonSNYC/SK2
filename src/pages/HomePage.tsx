@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 export default function HomePage() {
   const { hasActiveSession, activeSession, sessions } = useSessionContext();
   const navigate = useNavigate();
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [_currentTime, setCurrentTime] = useState(new Date());
 
   // Update time every minute for "sessions today" calculation
   useEffect(() => {

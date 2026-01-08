@@ -48,7 +48,7 @@ export default function FollowMeHelper() {
     errorMessage,
     lastHeard,
     toggleListening,
-    isListening,
+    isListening: _isListening,
   } = useVoiceInput(handleVoiceColorDetected);
 
   const { saveAttempt } = useFollowMeAttempts();

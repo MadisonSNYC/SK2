@@ -83,7 +83,6 @@ export default function StartSessionPage() {
     startSession({
       startingBalance: balance,
       machineId: machineTypeId,
-      currentGameId: selectedGame.id,
       location: showCustomLocation
         ? customLocation
         : LOCATIONS.find(loc => loc.id === locationId)?.name || '',
