@@ -2,9 +2,9 @@ import { Outlet, NavLink } from 'react-router-dom';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className="h-screen bg-gray-900 text-white flex flex-col">
       {/* Header */}
-      <header className="bg-gray-800 p-4 text-center border-b border-gray-700">
+      <header className="bg-gray-800 p-4 text-center border-b border-gray-700 flex-shrink-0">
         <h1 className="text-xl font-bold text-yellow-400">🎰 SkillMachine</h1>
         <p className="text-xs text-gray-400">PA Skill Game Tracker</p>
       </header>
@@ -15,7 +15,7 @@ export default function Layout() {
       </main>
 
       {/* Bottom Tab Navigation */}
-      <nav className="bg-gray-800 border-t border-gray-700 flex">
+      <nav className="bg-gray-800 border-t border-gray-700 flex flex-shrink-0">
         <NavLink
           to="/home"
           className={({ isActive }) =>
