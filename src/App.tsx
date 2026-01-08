@@ -4,6 +4,8 @@ import HomePage from './pages/HomePage';
 import StartSessionPage from './pages/StartSessionPage';
 import SessionPage from './pages/SessionPage';
 import SessionSummaryPage from './pages/SessionSummaryPage';
+import SessionDetailPage from './pages/SessionDetailPage';
+import HistoryPage from './pages/HistoryPage';
 import FollowMePage from './pages/FollowMePage';
 import StatsPage from './pages/StatsPage';
 import SettingsPage from './pages/SettingsPage';
@@ -18,6 +20,8 @@ function App() {
           <Route path="start-session" element={<StartSessionPage />} />
           <Route path="session" element={<SessionPage />} />
           <Route path="session/summary" element={<SessionSummaryPage />} />
+          <Route path="history" element={<HistoryPage />} />
+          <Route path="history/:sessionId" element={<SessionDetailPage />} />
           <Route path="follow-me" element={<FollowMePage />} />
           <Route path="stats" element={<StatsPage />} />
           <Route path="settings" element={<SettingsPage />} />

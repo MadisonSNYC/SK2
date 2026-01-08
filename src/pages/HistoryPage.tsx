@@ -1,17 +1,54 @@
+/**
+ * @fileoverview Session history page
+ * @module pages/HistoryPage
+ */
+
+import { useSessionHistory } from '../hooks/useSessionHistory';
+import SessionHistoryList from '../components/history/SessionHistoryList';
+import HistoryFilters from '../components/history/HistoryFilters';
+import { formatCurrency } from '../utils/formatting';
+
 export default function HistoryPage() {
+  const {
+    filteredSessions,
+    filters,
+    setFilters,
+    clearFilters,
+    sortField,
+    sortOrder,
+    setSortField,
+    toggleSortOrder,
+    totalSessions,
+    totalProfit,
+    locations,
+  } = useSessionHistory();
+
   return (
-    <div className="p-8 text-center max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-white mb-4">Session History</h1>
-      <div className="bg-gray-800 rounded-lg p-6">
-        <p className="text-gray-400 mb-4">Coming in Phase 6</p>
-        <ul className="space-y-2 text-sm text-gray-500">
-          <li>• View all past sessions</li>
-          <li>• Filter by machine, location, date</li>
-          <li>• Sort by profit/loss, duration</li>
-          <li>• View detailed session breakdowns</li>
-          <li>• Export session data</li>
-        </ul>
+    <div className="min-h-screen bg-gray-900 text-white p-4 pb-24">
+      <h1 className="text-2xl font-bold mb-2">Session History</h1>
+
+      {/* Summary */}
+      <div className="flex gap-4 mb-4 text-sm">
+        <span className="text-gray-400">
+          {totalSessions} session{totalSessions !== 1 ? 's' : ''}
+        </span>
+        <span className={totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}>
+          {totalProfit >= 0 ? '+' : ''}{formatCurrency(totalProfit)} total
+        </span>
       </div>
+
+      <HistoryFilters
+        filters={filters}
+        onFiltersChange={setFilters}
+        onClearFilters={clearFilters}
+        sortField={sortField}
+        sortOrder={sortOrder}
+        onSortFieldChange={setSortField}
+        onSortOrderToggle={toggleSortOrder}
+        locations={locations}
+      />
+
+      <SessionHistoryList sessions={filteredSessions} />
     </div>
   );
 }
