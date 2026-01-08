@@ -1,6 +1,10 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import type { Machine, Manufacturer, FollowMeVariant } from '../../types/index';
 import { MANUFACTURER_DEFAULTS } from '../../constants/config';
+import TextInputField from '../common/TextInputField';
+import SelectField from '../common/SelectField';
+import TextAreaField from '../common/TextAreaField';
 
 interface MachineFormProps {
   machine?: Machine; // If provided, we're editing; otherwise, adding
@@ -94,116 +98,76 @@ export default function MachineForm({ machine, onSave, onCancel }: MachineFormPr
     <form onSubmit={handleSubmit} className="p-4">
       <div className="space-y-4">
         {/* Machine Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Machine Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => handleChange('name', e.target.value)}
-            className={`w-full px-3 py-2 bg-gray-700 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 ${
-              errors.name ? 'border-red-500' : 'border-gray-600'
-            }`}
-            placeholder="e.g., Sunoco PA Skill #3"
-          />
-          {errors.name && (
-            <p className="mt-1 text-sm text-red-500">{errors.name}</p>
-          )}
-        </div>
+        <TextInputField
+          label="Machine Name"
+          value={formData.name}
+          onChange={(value) => handleChange('name', value)}
+          placeholder="e.g., Sunoco PA Skill #3"
+          required
+          error={errors.name}
+        />
 
         {/* Manufacturer */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Manufacturer <span className="text-red-500">*</span>
-          </label>
-          <select
-            value={formData.manufacturer}
-            onChange={(e) => handleChange('manufacturer', e.target.value as Manufacturer)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          >
-            {manufacturers.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          label="Manufacturer"
+          value={formData.manufacturer}
+          onChange={(value) => handleChange('manufacturer', value as Manufacturer)}
+          required
+        >
+          {manufacturers.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </SelectField>
 
         {/* Game Series */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Game Series
-          </label>
-          <input
-            type="text"
-            value={formData.gameSeries}
-            onChange={(e) => handleChange('gameSeries', e.target.value)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            placeholder="e.g., Pennsylvania Skill"
-          />
-        </div>
+        <TextInputField
+          label="Game Series"
+          value={formData.gameSeries}
+          onChange={(value) => handleChange('gameSeries', value)}
+          placeholder="e.g., Pennsylvania Skill"
+        />
 
         {/* Location */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Location
-          </label>
-          <input
-            type="text"
-            value={formData.location}
-            onChange={(e) => handleChange('location', e.target.value)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            placeholder="e.g., Joe's Bar, Sunoco Main St"
-          />
-        </div>
+        <TextInputField
+          label="Location"
+          value={formData.location}
+          onChange={(value) => handleChange('location', value)}
+          placeholder="e.g., Joe's Bar, Sunoco Main St"
+        />
 
         {/* Follow Me Variant */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Follow Me Variant
-          </label>
-          <select
-            value={formData.followMeVariant}
-            onChange={(e) => handleChange('followMeVariant', e.target.value as FollowMeVariant)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          >
-            {followMeVariants.map((v) => (
-              <option key={v} value={v}>
-                {v === 'none' ? 'Not Available' : v.charAt(0).toUpperCase() + v.slice(1)}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          label="Follow Me Variant"
+          value={formData.followMeVariant}
+          onChange={(value) => handleChange('followMeVariant', value as FollowMeVariant)}
+        >
+          {followMeVariants.map((v) => (
+            <option key={v} value={v}>
+              {v === 'none' ? 'Not Available' : v.charAt(0).toUpperCase() + v.slice(1)}
+            </option>
+          ))}
+        </SelectField>
 
         {/* Max Bet */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Max Bet ($)
-          </label>
-          <input
-            type="number"
-            step="0.01"
-            value={formData.maxBet}
-            onChange={(e) => handleChange('maxBet', parseFloat(e.target.value) || 0)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            placeholder="4.00"
-          />
-        </div>
+        <TextInputField
+          label="Max Bet ($)"
+          type="number"
+          step="0.01"
+          value={formData.maxBet.toString()}
+          onChange={(value) => handleChange('maxBet', parseFloat(value) || 0)}
+          placeholder="4.00"
+        />
 
         {/* Notes */}
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Notes
-          </label>
-          <textarea
-            value={formData.notes}
-            onChange={(e) => handleChange('notes', e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
-            placeholder="Any additional notes about this machine..."
-          />
-        </div>
+        <TextAreaField
+          label="Notes"
+          value={formData.notes}
+          onChange={(value) => handleChange('notes', value)}
+          placeholder="Any additional notes about this machine..."
+          rows={3}
+        />
       </div>
 
       {/* Actions */}
